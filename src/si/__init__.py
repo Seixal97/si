@@ -1,4 +1,4 @@
-__author__ = "João Correia"
+__author__ = "Paulo Seixal"
 __credits__ = ["João Correia, Fernando Cruz", "Vítor Pereira"]
 __license__ = "Apache License 2.0"
 __version__ = "0.0.1"
