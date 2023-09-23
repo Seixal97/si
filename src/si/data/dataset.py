@@ -109,7 +109,55 @@ class Dataset:
         numpy.ndarray (n_features)
         """
         return np.nanmax(self.X, axis=0)
+    
+    def dropna(self) -> None:
+        """
+        Drops all samples (and corresponding labels) with at least one null value
+        """
 
+        nan_samples = np.isnan(self.X).any(axis=1)
+        self.X = self.X[~nan_samples]
+
+        if self.y is not None:
+            self.y = self.y[~nan_samples]
+
+    
+    def fillna(self, value: Union[float, str]) -> None:
+        """
+        Replaces any null values with another specified value or, alternatively, the mean or median value
+        of the corresponding feature.
+
+        Parameters
+        ----------
+        value: Union[float, str]
+            replaces the NaN value
+        """
+        if isinstance(value, str):
+            if value == 'mean':
+                self.X = np.nan_to_num(self.X, nan=np.nanmean(self.X, axis=0))
+            elif value == 'median':
+                self.X = np.nan_to_num(self.X, nan=np.nanmedian(self.X, axis=0))
+            else:
+                raise ValueError(f"Invalid value: {value}")
+        else:
+            self.X = np.nan_to_num(self.X, nan=value)
+
+    def remove_by_index(self, index: int) -> None:
+        """
+        Removes a sample (and the corresponding label) by its index.
+
+        Parameters
+        ----------
+        index: int
+            index of the sample to be removed
+        """
+        if index < 0 or index >= len(self.X):
+            raise ValueError(f"Invalid index: {index}")
+        
+        self.X = np.delete(self.X, index, axis=0)
+        if self.y is not None:
+            self.y = np.delete(self.y, index, axis=0)
+            
     def summary(self) -> pd.DataFrame:
         """
         Returns a summary of the dataset
@@ -200,8 +248,8 @@ class Dataset:
 
 
 if __name__ == '__main__':
-    X = np.array([[1, 2, 3], [4, 5, 6]])
-    y = np.array([1, 2])
+    X = np.array([[1, 2, 3], [4, 5, 6], [6, 7, np.nan]])
+    y = np.array([1, 2, 3])
     features = np.array(['a', 'b', 'c'])
     label = 'y'
     dataset = Dataset(X, y, features, label)
@@ -214,3 +262,7 @@ if __name__ == '__main__':
     print(dataset.get_min())
     print(dataset.get_max())
     print(dataset.summary())
+    print(dataset.X)
+    dataset.remove_by_index(2)
+    print(dataset.X)
+
