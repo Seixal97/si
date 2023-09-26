@@ -58,6 +58,7 @@ class SelectKBest:
             Returns self.
         """
         self.F, self.p = self.score_func(dataset)
+        self.F = np.nan_to_num(self.F)
         return self
 
     def transform(self, dataset: Dataset) -> Dataset:
