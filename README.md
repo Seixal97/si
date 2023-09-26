@@ -1,7 +1,7 @@
-# Sistemas Inteligentes para a Bioinformática
+# Intelligent Systems for Bioinformatics
 
 ## Curricular Unit
-Mestrado em Bioinformática, Universidade do Minho, 2023-2024.
+Master in Bioinformatics, University of Minho, 2023-2024.
 
 
 ## Description
@@ -43,11 +43,39 @@ __email__ = "YOUR_EMAIL"
 
 Then, commit it to your local repository and publish it to your GitHub:
 ```bash
-git add README.md
-git commit -m "Adding my co-authorship to README.md file"
+git add src/si/__init__.py
+git commit -m "Adding my co-authorship to the package"
 git push origin main
 ```
 Note: you can also use the IDE Git tools.
+
+## Update you fork with the latest changes from the original repository
+
+Option 1:
+
+- Manually copy the changes from the original repository to your fork.
+
+Option 2:
+
+- You can perform a “Reverse Pull Request” on GitHub. A reverse pull request will follow the same steps as a regular
+    pull request. However, in this case, your fork becomes the base and your colleague’s repo is the head.
+    You can do it directly on GitHub by clicking on the “New pull request” button on your forked repo.
+    Then, you need to change the base fork to your forked repo and the head fork to the original repo.
+    Finally, you need to click on the “Create pull request” button.
+    You can then merge the pull request.
+
+Option 3:
+
+- You can use the command line to update your forked repo with the original repo.
+    First, you need to add the original repo as a remote.
+    Then, you need to pull the original repo into your local repo.
+    Finally, you need to merge the original repo into your forked repo.
+
+```bash
+git remote add upstream https://github.com/jcorreia11/si.git
+git pull upstream main
+git push origin main
+```
 
 
 ## Architecture
