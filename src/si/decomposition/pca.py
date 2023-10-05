@@ -150,13 +150,13 @@ if __name__ == '__main__':
     from si.io.csv_file import read_csv
     iris = read_csv('datasets/iris/iris.csv',sep=',',features=True, label=True)
 
-    pca = PCA(n_components=0.9)
+    pca = PCA(n_components=0.95)
     pca.fit_transform(iris)
-    print(pca.n_components)
+    print(pca.explained_variance_ratio)
 
     from sklearn.decomposition import PCA as PCA_sklearn
-    pca_sklearn = PCA_sklearn(n_components=0.9)
+    pca_sklearn = PCA_sklearn(n_components=0.95)
     pca_sklearn.fit_transform(iris.X)
-    print(pca_sklearn.n_components_)
+    print(pca_sklearn.explained_variance_ratio_)
 
 
