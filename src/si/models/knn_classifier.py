@@ -102,6 +102,7 @@ class KNNClassifier:
         predictions: np.ndarray
             The predictions of the model
         """
+        # dataset.X -> new samples to be tested against the dataset previously fitted to the model (self.dataset)
         return np.apply_along_axis(self._get_closest_label, axis=1, arr=dataset.X)
 
     def score(self, dataset: Dataset) -> float:
