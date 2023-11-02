@@ -271,6 +271,7 @@ class DecisionTreeClassifier:
         predictions = [self._make_prediction(x, self.tree) for x in dataset.X]
         return np.array(predictions)
 
+
     def score(self, dataset: Dataset) -> float:
         """
         Calculates the accuracy of the model on a dataset.
@@ -293,9 +294,10 @@ if __name__ == '__main__':
     from si.io.csv_file import read_csv
     from si.model_selection.split import train_test_split
 
-    data = read_csv('../../../datasets/iris/iris.csv', sep=',', features=True, label=True)
+    data = read_csv('/home/pauloseixal/Github/si/datasets/iris/iris.csv', sep=',', features=True, label=True)
     train, test = train_test_split(data, test_size=0.33, random_state=42)
     model = DecisionTreeClassifier(min_sample_split=3, max_depth=3, mode='gini')
     model.fit(train)
-    model.print_tree()
-    print(model.score(test))
+    # model.print_tree()
+    print(model.predict(test))
+    # print(model.score(test))
