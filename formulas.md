@@ -323,3 +323,17 @@ $$
 $$
 W_t = W_t - \alpha \frac{\hat{m_t}}{\sqrt{\hat{v_t}}+\epsilon}
 $$
+
+# RNN
+
+$$
+a^{(t)} = W h^{(t-1)}+U x^{(t)}
+$$
+
+$$
+h^t = activation(a^{(t)})
+$$
+
+$$
+o^{(t)}=Vh^{(t)}
+$$
