@@ -128,6 +128,6 @@ if __name__ == '__main__':
     
     model2 = SklearnRandomForestClassifier(n_estimators=5, min_samples_split=3, max_depth=3)
     model2.fit(train.X, train.y)
-    print(model2.predict(test.X))
+    # print(model2.predict(test.X))
     print(accuracy(test.y, model2.predict(test.X)))
 
