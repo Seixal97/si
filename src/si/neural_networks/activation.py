@@ -178,3 +178,81 @@ class ReLUActivation(ActivationLayer):
             The derivative of the activation function.
         """
         return np.where(input > 0, 1, 0)
+    
+
+class TanhActivation(ActivationLayer):
+    """
+    Tanh activation function.
+    """
+
+    def activation_function(self, input: np.ndarray):
+        """
+        Tanh activation function.
+
+        Parameters
+        ----------
+        input: numpy.ndarray
+            The input to the layer.
+
+        Returns
+        -------
+        numpy.ndarray
+            The output of the layer.
+        """
+        return np.tanh(input)
+
+    def derivative(self, input: np.ndarray):
+        """
+        Derivative of the tanh activation function.
+
+        Parameters
+        ----------
+        input: numpy.ndarray
+            The input to the layer.
+
+        Returns
+        -------
+        numpy.ndarray
+            The derivative of the activation function.
+        """
+        return 1 - np.square(self.activation_function(input))
+    
+
+
+class SoftmaxActivation(ActivationLayer):
+    """
+    Softmax activation function.
+    """
+
+    def activation_function(self, input: np.ndarray):
+        """
+        Softmax activation function.
+
+        Parameters
+        ----------
+        input: numpy.ndarray
+            The input to the layer.
+
+        Returns
+        -------
+        numpy.ndarray
+            The output of the layer.
+        """
+        exp = np.exp(input - np.max(input, axis=1, keepdims=True))
+        return exp / np.sum(exp, axis=1, keepdims=True)
+
+    def derivative(self, input: np.ndarray):
+        """
+        Derivative of the softmax activation function.
+
+        Parameters
+        ----------
+        input: numpy.ndarray
+            The input to the layer.
+
+        Returns
+        -------
+        numpy.ndarray
+            The derivative of the activation function.
+        """
+        return self.activation_function(input) * (1 - self.activation_function(input))
