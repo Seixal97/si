@@ -8,13 +8,6 @@ class VotingClassifier:
     """
     Ensemble classifier that uses the majority vote to predict the class labels.
 
-    Parameters
-    ----------
-    models : array-like, shape = [n_models]
-        Different models for the ensemble.
-
-    Attributes
-    ----------
     """
     def __init__(self, models):
         """
