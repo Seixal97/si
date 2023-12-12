@@ -1,4 +1,4 @@
-from typing import Callable, Union
+from typing import Callable, Union, Literal
 
 import numpy as np
 
@@ -26,7 +26,7 @@ class KNNClassifier:
     dataset: np.ndarray
         The training data
     """
-    def __init__(self, k: int = 1, distance: Callable = euclidean_distance):
+    def __init__(self, k: int = 1, weights: Literal['uniform', 'distance'] = 'uniform', distance: Callable = euclidean_distance):
         """
         Initialize the KNN classifier
 
@@ -34,11 +34,14 @@ class KNNClassifier:
         ----------
         k: int
             The number of nearest neighbors to use
+        weights: Literal['uniform', 'distance']
+            The weight function to use
         distance: Callable
             The distance function to use
         """
         # parameters
         self.k = k
+        self.weights = weights
         self.distance = distance
 
         # attributes
@@ -60,6 +63,59 @@ class KNNClassifier:
         """
         self.dataset = dataset
         return self
+    
+    def _get_weights(self, distances: np.ndarray) -> np.ndarray:
+        '''
+        It returns the weights of the k nearest neighbors
+
+        Parameters
+        ----------
+        distances: np.ndarray
+            The distances between the sample and the dataset
+
+        Returns
+        -------
+        weights: np.ndarray
+            The weights of the k nearest neighbors
+        '''
+        # get the k nearest neighbors (first k indexes of the sorted distances)
+        k_nearest_neighbors = np.argsort(distances)[:self.k]
+
+        # get the weights of the k nearest neighbors
+        weights = 1 / distances[k_nearest_neighbors]
+        return weights
+    
+    def _get_weighted_label(self, sample: np.ndarray) -> Union[int, str]:
+        """
+        It returns the weighted label of the given sample
+
+        Parameters
+        ----------
+        sample: np.ndarray
+            The sample to get the weighted label of
+
+        Returns
+        -------
+        label: str or int
+            The weighted label
+        """
+        # compute the distance between the sample and the dataset
+        distances = self.distance(sample, self.dataset.X)
+
+        # get the weights of the k nearest neighbors
+        weights = self._get_weights(distances)
+
+        # get the k nearest neighbors
+        k_nearest_neighbors = np.argsort(distances)[:self.k]
+
+        # get the labels of the k nearest neighbors
+        k_nearest_neighbors_labels = self.dataset.y[k_nearest_neighbors]
+
+        # get the weighted label
+        if self.weights == 'uniform':
+            return np.bincount(k_nearest_neighbors_labels).argmax()
+        elif self.weights == 'distance':
+            return np.bincount(k_nearest_neighbors_labels, weights=weights).argmax()
 
     def _get_closest_label(self, sample: np.ndarray) -> Union[int, str]:
         """
@@ -75,18 +131,23 @@ class KNNClassifier:
         label: str or int
             The closest label
         """
-        # compute the distance between the sample and the dataset
-        distances = self.distance(sample, self.dataset.X)
+        if self.weights == 'distance':
+            return self._get_weighted_label(sample)
+        
+        else:
+            # compute the distance between the sample and the dataset
+            distances = self.distance(sample, self.dataset.X)
 
-        # get the k nearest neighbors
-        k_nearest_neighbors = np.argsort(distances)[:self.k]
+            # get the k nearest neighbors
+            k_nearest_neighbors = np.argsort(distances)[:self.k]
 
-        # get the labels of the k nearest neighbors
-        k_nearest_neighbors_labels = self.dataset.y[k_nearest_neighbors]
+            # get the labels of the k nearest neighbors
+            k_nearest_neighbors_labels = self.dataset.y[k_nearest_neighbors]
 
-        # get the most common label
-        labels, counts = np.unique(k_nearest_neighbors_labels, return_counts=True)
-        return labels[np.argmax(counts)]
+            # get the most common label
+            labels, counts = np.unique(k_nearest_neighbors_labels, return_counts=True)
+            return labels[np.argmax(counts)]
+        
 
     def predict(self, dataset: Dataset) -> np.ndarray:
         """
@@ -133,7 +194,7 @@ if __name__ == '__main__':
     dataset_train, dataset_test = train_test_split(dataset_, test_size=0.2)
 
     # initialize the KNN classifier
-    knn = KNNClassifier(k=3)
+    knn = KNNClassifier(k=3, weights='distance')
 
     # fit the model to the train dataset
     knn.fit(dataset_train)
@@ -141,3 +202,5 @@ if __name__ == '__main__':
     # evaluate the model on the test dataset
     score = knn.score(dataset_test)
     print(f'The accuracy of the model is: {score}')
+
+    
