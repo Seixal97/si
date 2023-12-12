@@ -27,7 +27,7 @@ class OneHotEncoder:
         self.padder = padder
         self.max_length = max_length
 
-        self.alphabet = set()
+        self.alphabet = None
         self.char_to_index = {}
         self.index_to_char = {}
     

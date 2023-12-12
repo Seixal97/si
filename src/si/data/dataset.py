@@ -5,9 +5,12 @@ import pandas as pd
 
 
 class Dataset:
+    """
+    Class representing a tabular dataset for single output classification.
+    """
     def __init__(self, X: np.ndarray, y: np.ndarray = None, features: Sequence[str] = None, label: str = None) -> None:
         """
-        Dataset represents a tabular dataset for single output classification.
+        Initializes a Dataset object
 
         Parameters
         ----------
@@ -38,6 +41,7 @@ class Dataset:
     def shape(self) -> Tuple[int, int]:
         """
         Returns the shape of the dataset
+
         Returns
         -------
         tuple (n_samples, n_features)
@@ -47,6 +51,7 @@ class Dataset:
     def has_label(self) -> bool:
         """
         Returns True if the dataset has a label
+
         Returns
         -------
         bool
@@ -56,6 +61,7 @@ class Dataset:
     def get_classes(self) -> np.ndarray:
         """
         Returns the unique classes in the dataset
+
         Returns
         -------
         numpy.ndarray (n_classes)
@@ -68,6 +74,7 @@ class Dataset:
     def get_mean(self) -> np.ndarray:
         """
         Returns the mean of each feature
+
         Returns
         -------
         numpy.ndarray (n_features)
@@ -77,6 +84,7 @@ class Dataset:
     def get_variance(self) -> np.ndarray:
         """
         Returns the variance of each feature
+
         Returns
         -------
         numpy.ndarray (n_features)
@@ -86,6 +94,7 @@ class Dataset:
     def get_median(self) -> np.ndarray:
         """
         Returns the median of each feature
+
         Returns
         -------
         numpy.ndarray (n_features)
@@ -95,6 +104,7 @@ class Dataset:
     def get_min(self) -> np.ndarray:
         """
         Returns the minimum of each feature
+
         Returns
         -------
         numpy.ndarray (n_features)
@@ -104,6 +114,7 @@ class Dataset:
     def get_max(self) -> np.ndarray:
         """
         Returns the maximum of each feature
+
         Returns
         -------
         numpy.ndarray (n_features)
@@ -113,13 +124,23 @@ class Dataset:
     def dropna(self) -> None:
         """
         Drops all samples (and corresponding labels) with at least one null value
+
+        Returns
+        -------
+        self
         """
 
+        # find samples with at least one NaN value
         nan_samples = np.isnan(self.X).any(axis=1)
+
+        # remove samples with NaN values
         self.X = self.X[~nan_samples]
 
+        # remove corresponding labels
         if self.y is not None:
             self.y = self.y[~nan_samples]
+
+        return self
 
     
     def fillna(self, value: Union[float, str]) -> None:
@@ -131,16 +152,28 @@ class Dataset:
         ----------
         value: Union[float, str]
             replaces the NaN value
+        
+        Returns
+        -------
+        self
         """
+
+        # replace NaN values with the mean or median value of the corresponding feature
         if isinstance(value, str):
             if value == 'mean':
                 self.X = np.nan_to_num(self.X, nan=np.nanmean(self.X, axis=0))
             elif value == 'median':
                 self.X = np.nan_to_num(self.X, nan=np.nanmedian(self.X, axis=0))
+            
+            # only mean and median are supported
             else:
                 raise ValueError(f"Invalid value: {value}")
+        
+        # replace NaN values with a specified value
         else:
             self.X = np.nan_to_num(self.X, nan=value)
+
+        return self
 
     def remove_by_index(self, index: int) -> None:
         """
@@ -150,17 +183,26 @@ class Dataset:
         ----------
         index: int
             index of the sample to be removed
+
+        Returns
+        -------
+        self
         """
+        # check if index is valid (i.e. within the range of the dataset)
         if index < 0 or index >= len(self.X):
             raise ValueError(f"Invalid index: {index}")
         
+        # remove sample and corresponding label (if available)
         self.X = np.delete(self.X, index, axis=0)
         if self.y is not None:
             self.y = np.delete(self.y, index, axis=0)
+        
+        return self
             
     def summary(self) -> pd.DataFrame:
         """
         Returns a summary of the dataset
+        
         Returns
         -------
         pandas.DataFrame (n_features, 5)
