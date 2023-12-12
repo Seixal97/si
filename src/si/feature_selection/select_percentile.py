@@ -58,6 +58,7 @@ class SelectPercentile:
         self: object
             Returns self.
         """
+        # compute F scores and p-values between each label for each feature
         self.F, self.p = self.score_func(dataset)
         self.F = np.nan_to_num(self.F)
         return self
@@ -76,9 +77,17 @@ class SelectPercentile:
         dataset: Dataset
             A labeled dataset with the highest scoring features within a specified percentile.
         """
+
+        # compute threshold value based on the specified percentile
         threshold = np.percentile(self.F, 100 - self.percentile)
+
+        # find the indexes of the features with a score higher than the threshold value
         idxs = np.where(self.F > threshold)[0]
+
+        # select the features based on the indexes
         features = np.array(dataset.features)[idxs]
+
+        # create and return a new dataset with the selected features
         return Dataset(X=dataset.X[:, idxs], y=dataset.y, features=list(features), label=dataset.label)
 
     def fit_transform(self, dataset: Dataset) -> Dataset:

@@ -26,7 +26,11 @@ def f_classification(dataset: Dataset) -> Union[Tuple[np.ndarray, np.ndarray],
         p-values
     """
     classes = dataset.get_classes()
+
+    # group samples by each unique class
     groups = [dataset.X[dataset.y == c] for c in classes]
+
+    # compute F-value and p-value between each group
     F, p = stats.f_oneway(*groups)
     return F, p
 

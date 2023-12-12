@@ -57,6 +57,7 @@ class SelectKBest:
         self: object
             Returns self.
         """
+        # compute F scores and p-values between each label for each feature
         self.F, self.p = self.score_func(dataset)
         self.F = np.nan_to_num(self.F)
         return self
@@ -75,7 +76,10 @@ class SelectKBest:
         dataset: Dataset
             A labeled dataset with the k highest scoring features.
         """
+        # select k highest scoring features in ascending order (last k elements)
         idxs = np.argsort(self.F)[-self.k:]
+
+        # remove features from feature list (only keep the selected idxs)
         features = np.array(dataset.features)[idxs]
         return Dataset(X=dataset.X[:, idxs], y=dataset.y, features=list(features), label=dataset.label)
 
