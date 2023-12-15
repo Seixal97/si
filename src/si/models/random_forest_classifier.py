@@ -55,17 +55,29 @@ class RandomForestClassifier:
         RandomForestClassifier
             The fitted model.
         '''
+        # seed the random number generator
         if self.seed is not None:
             np.random.seed(self.seed)
+
         n_samples, n_features = dataset.shape()
+
+        # set max_features to sqrt(n_features) if not set (we do this to reduce overfitting)
         if self.max_features is None:
             self.max_features = int(np.sqrt(n_features))
+
+        # loop through the number of estimators (trees)
         for i in range(self.n_estimators):
+
+            # create a bootstrap sample of the data
             bootstrap_samples_idx = np.random.choice(n_samples, n_samples, replace=True)
             bootstrap_features_idx = np.random.choice(n_features, self.max_features, replace=False)
             bootstrap_dataset = Dataset(dataset.X[bootstrap_samples_idx, :][:, bootstrap_features_idx], dataset.y[bootstrap_samples_idx])
+
+            # fit a decision tree to the bootstrap sample
             tree = DecisionTreeClassifier(max_depth=self.max_depth, min_sample_split=self.min_sample_split, mode=self.mode)
             tree.fit(bootstrap_dataset)
+
+            # add the tree to the list of trees
             self.trees.append((bootstrap_features_idx, tree))
         return self
     
@@ -84,10 +96,14 @@ class RandomForestClassifier:
         np.ndarray
             The predicted target values.
         '''
+        # set up an array to store the predictions of each tree
         predictions = [None] * self.n_estimators
+
+        # loop through the trees and get their predictions (only for the features they were trained on)
         for i, (features_idx, tree) in enumerate(self.trees):
             predictions[i] = tree.predict(Dataset(dataset.X[:, features_idx], dataset.y))
         
+        # get the most frequent prediction for each sample
         most_frequent = []
         for z in zip(*predictions):
             most_frequent.append(max(set(z), key=z.count))

@@ -72,7 +72,7 @@ class RidgeRegressionLeastSquares:
         # compute penalty matrix (l2_penalty * identity matrix)
         penalty_matrix = np.eye(X.shape[1]) * self.l2_penalty
 
-        # change first position of penalty matrix to 0
+        # change first position of penalty matrix to 0 (we don't want to regularize the intercept term theta_zero)
         penalty_matrix[0, 0] = 0
 
         # compute theta_zero (first element of the theta vector) and theta (remaium elements)
