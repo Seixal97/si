@@ -35,15 +35,19 @@ class StackingClassifier:
         StackingClassifier
             The fitted model.
         '''
+        # train the models
         for model in self.models:
             model.fit(dataset)
         
+        # get the predictions from each model
         predictions = list()
-
         for model in self.models:
             predictions.append(model.predict(dataset))
         
+        # transpose the predictions (we do this because we want the models to be the columns and each prediction to be a row)
         predictions = np.array(predictions).T
+
+        # train the final model with the predictions made by the other models
         self.final_model.fit(Dataset(dataset.X, predictions))
 
         return self
@@ -62,12 +66,15 @@ class StackingClassifier:
         np.ndarray
             The predicted labels.
         '''
+        # get the predictions from each model
         predictions = list()
-
         for model in self.models:
             predictions.append(model.predict(dataset))
-        
+
+        # transpose the predictions (we do this because we want the models to be the columns and each prediction to be a row)
         predictions = np.array(predictions).T
+
+        # predict the labels with the final model
         return self.final_model.predict(Dataset(dataset.X, predictions))
     
     def score(self, dataset: Dataset) -> float:

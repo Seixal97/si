@@ -36,7 +36,8 @@ def randomized_search_cv(model, dataset: Dataset, hyperparameter_grid: dict, sco
     for parameter in hyperparameter_grid.keys():
         if not hasattr(model, parameter):
             raise AttributeError(f"Model {model} does not have parameter {parameter}.")
-        
+    
+    # set the default output
     randomized_search_output = {'hyperparameters': [], 
                                 'scores': [], 
                                 'best_hyperparameters': None, 
