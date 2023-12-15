@@ -55,21 +55,24 @@ class CategoricalNB:
         self.class_prior = np.zeros(n_classes)
 
 
-        # compute class_count, feature_count and class_prior
-        for i, sample in enumerate(dataset.X):
-            class_count[dataset.y[i]] += 1
-            feature_count[dataset.y[i]] += sample
+        # compute class_count (with smoothing)
+        for class_ in range(n_classes):
+            class_count[class_] = np.sum(dataset.y == class_) + self.smoothing
 
+        # compute feature_count (with smoothing)
+        for class_ in range(n_classes):
+            for feature in range(n_features):
+                feature_count[class_, feature] = np.sum(dataset.X[dataset.y == class_, feature], axis=0) + self.smoothing
+
+        # compute class_prior
         self.class_prior = class_count / n_samples
 
-        # add smoothing to avoid zero probabilities
-        class_count += self.smoothing
-        feature_count += self.smoothing
+        # compute feature_prob
+        self.feature_prob = feature_count / class_count.reshape(-1, 1)
 
-        # compute feature_prob (feature_counts divided by class_counts for each class)
-        self.feature_prob = feature_count / class_count.reshape(-1,1)
+        return self       
 
-        return self
+        
     
 
     def predict(self, dataset: Dataset) -> np.ndarray:
@@ -125,7 +128,8 @@ class CategoricalNB:
 if __name__ == '__main__':
     # Create a dataset and apply the model
     from si.model_selection.split import train_test_split
-    dataset = Dataset.from_random(100, 20, 2)
+    np.random.seed(42)
+    dataset = Dataset.from_random(100, 10, 2)
     dataset_train, dataset_test = train_test_split(dataset, 0.2)
 
     model = CategoricalNB()
