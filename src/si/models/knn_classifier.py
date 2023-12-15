@@ -80,6 +80,7 @@ class KNNClassifier:
         '''
         # get the k nearest neighbors (first k indexes of the sorted distances)
         k_nearest_neighbors = np.argsort(distances)[:self.k]
+        distances[k_nearest_neighbors] = np.maximum(distances[k_nearest_neighbors], 0.000001)
 
         # get the weights of the k nearest neighbors
         weights = 1 / distances[k_nearest_neighbors]
@@ -202,5 +203,5 @@ if __name__ == '__main__':
     # evaluate the model on the test dataset
     score = knn.score(dataset_test)
     print(f'The accuracy of the model is: {score}')
+  
 
-    

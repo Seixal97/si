@@ -90,3 +90,12 @@ def stratified_train_test_split(dataset: Dataset, test_size: float = 0.2, random
 
 
 
+
+if __name__ == '__main__':
+    from si.io.csv_file import read_csv
+    iris = read_csv('/home/pauloseixal/Github/si/datasets/iris/iris.csv',sep=',',features=True, label=True)
+    dataset_train, dataset_test = stratified_train_test_split(iris, test_size=0.2)
+
+
+
+

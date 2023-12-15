@@ -61,7 +61,7 @@ class PCA:
         #singular value decomposition
         self.U, self.S, self.V = np.linalg.svd(self._get_centered_data(dataset), full_matrices=False)
 
-        #extracting the components (first n_components columns of V)
+        #extracting the components (first n_components rows of V.T)
         self.components = self.V[:self.n_components]
 
         return self.components
@@ -78,6 +78,8 @@ class PCA:
 
         #extracting the explained variance
         ev = (self.S ** 2) / (self._get_centered_data(dataset).shape[0] - 1)
+
+        # explained variance is the first n_components of ev
         self.explained_variance = ev[:self.n_components]
         self.explained_variance_ratio = self.explained_variance / np.sum(self.explained_variance)
 

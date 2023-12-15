@@ -60,7 +60,11 @@ class KMeans:
         dataset: Dataset
             Dataset object.
         """
+        
+        # generate indexes of the centroids (random samples)
         seeds = np.random.permutation(dataset.shape()[0])[:self.k]
+
+        # get the centroids from the dataset
         self.centroids = dataset.X[seeds]
 
     def _get_closest_centroid(self, sample: np.ndarray) -> np.ndarray:
@@ -77,7 +81,10 @@ class KMeans:
         np.ndarray
             The closest centroid to each data point.
         """
+        # compute the distance between the sample and the centroids
         centroids_distances = self.distance(sample, self.centroids)
+
+        # get the index of the closest centroid for that sample
         closest_centroid_index = np.argmin(centroids_distances, axis=0)
         return closest_centroid_index
 
@@ -104,12 +111,14 @@ class KMeans:
         convergence = False
         i = 0
         labels = np.zeros(dataset.shape()[0])
+
+        # iterate until convergence (centroids do not change anymore) or max_iter
         while not convergence and i < self.max_iter:
 
             # get closest centroid
             new_labels = np.apply_along_axis(self._get_closest_centroid, axis=1, arr=dataset.X)
 
-            # compute the new centroids
+            # compute the new centroids (mean of the samples in the cluster)
             centroids = []
             for j in range(self.k):
                 centroid = np.mean(dataset.X[new_labels == j], axis=0)
