@@ -238,8 +238,8 @@ class SoftmaxActivation(ActivationLayer):
         numpy.ndarray
             The output of the layer.
         """
-        exp = np.exp(input - np.max(input, axis=1, keepdims=True))
-        return exp / np.sum(exp, axis=1, keepdims=True)
+        exp = np.exp(input - np.max(input, axis=-1, keepdims=True))
+        return exp / np.sum(exp, axis=-1, keepdims=True)
 
     def derivative(self, input: np.ndarray):
         """
