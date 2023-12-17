@@ -230,7 +230,7 @@ if __name__ == '__main__':
     from si.io.csv_file import read_csv
 
     # training data
-    dataset = read_csv('../../../datasets/iris/iris.csv', sep=',', features=True, label=True)
+    dataset = read_csv('/home/pauloseixal/Github/si/datasets/iris/iris.csv', sep=',', features=True, label=True)
     # convert labels to one-hot encoding
     new_y = np.zeros((dataset.y.shape[0], 3))
     for i, label in enumerate(dataset.y):
