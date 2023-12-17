@@ -133,9 +133,16 @@ class DenseLayer(Layer):
 
     def initialize(self, optimizer: Optimizer) -> 'DenseLayer':
         # initialize weights from a 0 centered uniform distribution [-0.5, 0.5)
+        # [[w f1n1, w f1n2, w f1n3, ...],
+        # [w f2n1, w f2n2, w f2n3, ...], 
+        # [w f3n1, w f3n2, w f3n3, ...],...]
         self.weights = np.random.rand(self.input_shape()[0], self.n_units) - 0.5
+
         # initialize biases to 0
+        # [[b1, b2, b3, ...]]
         self.biases = np.zeros((1, self.n_units))
+
+        # initialize optimizer 
         self.w_opt = copy.deepcopy(optimizer)
         self.b_opt = copy.deepcopy(optimizer)
         return self
@@ -149,6 +156,8 @@ class DenseLayer(Layer):
         int
             The number of parameters of the layer.
         """
+        # returns the number of parameters of the layer
+        # (n_input_features * n_units) + biases
         return np.prod(self.weights.shape) + np.prod(self.biases.shape)
 
     def forward_propagation(self, input: np.ndarray, training: bool) -> np.ndarray:
@@ -167,7 +176,11 @@ class DenseLayer(Layer):
         numpy.ndarray
             The output of the layer.
         """
+        # computes the layer output
+        # [[f1, f2, f3, ...]]
         self.input = input
+
+        # [[f1, f2, f3, ...]] * [[w f1n1, w f1n2, w f1n3, ...] + [[b1, b2, b3, ...]]
         self.output = np.dot(self.input, self.weights) + self.biases
         return self.output
 
@@ -238,6 +251,8 @@ class Dropout(Layer):
 
         '''
         super().__init__()
+
+        # means the percentage of neurons to drop
         self.probability = probability
         self.mask = None
         self.input = None
@@ -261,7 +276,7 @@ class Dropout(Layer):
         '''
         self.input = input
 
-        #if we are in training mode
+        #if we are in training mode (we only apply dropout during training)
         if training:
 
             #compute the scaling factor to apply at test time
@@ -312,15 +327,18 @@ class Dropout(Layer):
         '''
         Returns the number of parameters of the layer.
         '''
+        # we do this so that the dropout layer can be used in a model
         return 0
         
 if __name__ == "__main__":
     #test the dropout layer
-    np.random.seed(1)
-    x = np.random.randint(10, size=(1, 10))
+    np.random.seed(42)
+    x = np.array([[5, 8, 9, 5, 10, 2, 1, 7, 6, 9]])
     print("x:", x)
     dropout = Dropout(0.5)
     print("output training:", dropout.forward_propagation(x, training=True))
     print("mask:", dropout.mask)
     
     print("output inference:", dropout.forward_propagation(x, training=False))
+
+    

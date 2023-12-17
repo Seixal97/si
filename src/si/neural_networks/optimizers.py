@@ -114,8 +114,23 @@ class Adam(Optimizer):
             if self.v is None:
                 self.v = np.zeros(np.shape(w))
             self.t += 1
+
+            # compute and update the moving averages of the gradient and the squared gradient
             self.m = self.beta_1 * self.m + (1 - self.beta_1) * grad_loss_w
             self.v = self.beta_2 * self.v + (1 - self.beta_2) * grad_loss_w ** 2
+
+            # Bias correction
             m_hat = self.m / (1 - self.beta_1 ** self.t)
             v_hat = self.v / (1 - self.beta_2 ** self.t)
             return w - self.learning_rate * m_hat / (np.sqrt(v_hat) + self.epsilon)
+        
+
+if __name__ == '__main__':
+    weights = np.array([1, 2, 3, 4, 5])
+    grad_loss_weights = np.array([0.1, 0.2, 0.3, 0.4, 0.5])
+
+    for x in [0.01, 0.1, 0.5]:
+        adam_optimizer = Adam(learning_rate=x)
+        updated_w_adam = adam_optimizer.update(weights, grad_loss_weights)
+        print(f"Learing Rate {x}:", updated_w_adam)
+
